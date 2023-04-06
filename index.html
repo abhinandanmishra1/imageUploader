@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      .loading {
+        color: orange;
+      }
+
+      .success {
+        color: green;
+      }
+
+      .error {
+        color: red;
+      }
+
+      .none {
+        display: none;
+      }
+
+      .uploadedImage {
+        width: 500px;
+        height: 500px;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .container {
+        min-height: 30%;
+        display: grid;
+        gap: 10px;
+        border: 1px solid #d4d0dc;
+        border-radius: 20px;
+        padding: 20px;
+      }
+
+      form {
+        display: grid;
+        gap: 20px;
+      }
+
+      .image::-webkit-file-upload-button {
+        visibility: hidden;
+      }
+
+      .image::before {
+        content: "Select some files";
+        display: inline-block;
+        background: linear-gradient(top, #f9f9f9, #e3e3e3);
+        border: 1px solid #999;
+        border-radius: 3px;
+        padding: 5px 8px;
+        outline: none;
+        white-space: nowrap;
+        -webkit-user-select: none;
+        cursor: pointer;
+        text-shadow: 1px 1px #fff;
+        font-weight: 700;
+        font-size: 10pt;
+      }
+
+      .image:hover::before {
+        border-color: black;
+      }
+
+      .image:active::before {
+        background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+      }
+
+      button {
+        background-color: #0426be;
+        color: white;
+        border-radius: 20px;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all 0.5s;
+        outline-style: auto;
+      }
+
+      button:hover {
+        filter: brightness(2);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Test the image uploader</h1>
+
+      <form id="imageUploaderForm" enctype="multipart/form-data">
+        <input
+          type="file"
+          name="image"
+          id="image"
+          class="image"
+          accept=".jpg,.jpeg,.png"
+        />
+        <button>Submit</button>
+      </form>
+
+      <div>
+        <h1 id="status"></h1>
+        <img
+          id="uploadedImage"
+          src=""
+          alt="uploadedImage"
+          class="uploadedImage none"
+        />
+      </div>
+    </div>
+
+    <script>
+      const form = document.getElementById("imageUploaderForm");
+
+      const setStatus = (status) => {
+        document.getElementById(
+          "status"
+        ).innerHTML = `Status: <span class='${status.toLowerCase()}'> ${status} </status>`;
+      };
+
+      const sendFile = async (e) => {
+        e.preventDefault();
+        const files = document.getElementById("image").files;
+        console.log(files);
+
+        const formData = new FormData();
+        formData.append("image", files[0]);
+
+        try {
+          setStatus("Loading");
+          const response = await fetch("http://localhost:5000/image", {
+            method: "POST",
+            body: formData,
+          });
+          const data = await response.json();
+
+          if (data) {
+            setStatus("Success");
+            const uploadedImage = document.getElementById("uploadedImage");
+            uploadedImage.src = data.image.url;
+            uploadedImage.classList.toggle("none");
+          } else {
+            setStatus("Error");
+          }
+          console.log(response, data);
+        } catch (err) {
+          console.log(err);
+          setStatus("Error");
+        }
+      };
+
+      form.addEventListener("submit", sendFile);
+    </script>
+  </body>
+</html>
