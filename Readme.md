@@ -10,6 +10,8 @@
 ## What it does?
 - We can store any local image on cloudinary and then the link can be stored to mongoDb database
 
+[Screencast from 06-04-23 08:52:57 PM IST.webm](https://user-images.githubusercontent.com/64205626/230445610-c959561d-0306-441d-b77c-7d86ae4fdb94.webm)
+
 ## How is it implemented?
 - For frontend a html file which sends the file that are selected and calling upload api 
 - In backend `multer` has been used for uploading the file 
